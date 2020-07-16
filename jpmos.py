@@ -14,21 +14,19 @@ import numpy as np
 
 def get_jpmos_coefs(dd):
   
-  historic_c_p_a0 = pd.read_csv(dd + '/JPM-OS/historic_c_p_a0.csv')
-  historic_c_p_a1= pd.read_csv(dd + '/JPM-OS/historic_c_p_a1.csv')
+  historic_c_p_a0 = pd.read_csv(dd + '/historic_c_p_a0.csv')
+  historic_c_p_a1= pd.read_csv(dd + '/historic_c_p_a1.csv')
   
   return historic_c_p_a0, historic_c_p_a1
 
   
 def get_storm_stats(dd):
   
-  radii=pd.read_csv(dd + '/JPM-OS/radius.csv')
-  historic_theta_bar=pd.read_csv(dd + '/JPM-OS/historic_theta_bar.csv')
-  historic_theta_var=pd.read_csv(dd + '/JPM-OS/historic_theta_var.csv')
-  historic_x_freq=pd.read_csv(dd + '/JPM-OS/historic_x_freq.csv')
-  #storm_params=pd.read_csv(dd + '/JPM-OS/JMP-OS_storm_parameters.csv')
-  #storm_params=stm.get_storm_params(dd)
-  lon=pd.read_csv(dd + '/JPM-OS/lon.csv')
+  radii=pd.read_csv(dd + '/radius.csv')
+  historic_theta_bar=pd.read_csv(dd + '/historic_theta_bar.csv')
+  historic_theta_var=pd.read_csv(dd + '/historic_theta_var.csv')
+  historic_x_freq=pd.read_csv(dd + '/historic_x_freq.csv')
+  lon=pd.read_csv(dd + '/lon.csv')
   
   return radii, historic_theta_bar, historic_theta_var, historic_x_freq, lon
 
