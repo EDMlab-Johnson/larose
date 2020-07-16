@@ -24,7 +24,7 @@ import larose_function_variations as lfv
 
 np.random.seed(42)
 
-
+dd = sys.argv[1]
 
 
 #Read in needed data from config file, include dd as argument

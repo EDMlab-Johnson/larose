@@ -32,7 +32,7 @@ def min_cost_ead_updated(crest_height_upgrade,needed_arguments, oldFragFlag = Fa
     
     
     #adjust crest heights
-    print("started call")
+    #print("started call")
     #we want to include values rounded up and down to 1 decimal point, and 
     #when we have something with exactly one decimal point we need the surrounding values
     #regardless. And there are some odd numerical precision issues forcing us to go
@@ -186,7 +186,7 @@ def larose_future_updated(sea_lvl, intensity, frequency_mod, crest_height_upgrad
     
     
     #adjust crest heights
-    print("started call")
+    #print("started call")
     #we want to include values rounded up and down to 1 decimal point, and 
     #when we have something with exactly one decimal point we need the surrounding values
     #regardless. And there are some odd numerical precision issues forcing us to go
