@@ -261,7 +261,10 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
     OandMCostPerYear=subtotal+contingency_OandM
     OandMCostPerYearWithoutAction = cost[13,3]
     AnnualOandMCost = OandMCostPerYear - OandMCostPerYearWithoutAction
-    conversionFactor = (math.pow((1+discount_rate), planning_horizon)-1)/(discount_rate*math.pow(discount_rate+1,planning_horizon)) 
+    if discount_rate == 0:
+        conversionFactor = planning_horizon
+    else:
+        conversionFactor = (math.pow((1+discount_rate), planning_horizon)-1)/(discount_rate*math.pow(discount_rate+1,planning_horizon)) 
     OandMCost=conversionFactor * AnnualOandMCost
 
     #Total cost
