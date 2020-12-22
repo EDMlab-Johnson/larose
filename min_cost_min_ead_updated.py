@@ -31,7 +31,10 @@ import copy
 from numba import jit
 import larose_function_variations as lfv
 
-np.random.seed(42)
+import timeit
+start= timeit.default_timer()
+
+#np.random.seed(42)
 
 
 
@@ -85,14 +88,16 @@ polderObject = stm.polder(dd)
  #should be tested in model validation when compared to CLARA
 #TODO make argument. will try 
 historic_c_p_a0, historic_c_p_a1 = jpm.get_jpmos_coefs(dd)
+
+# specify which reach configuration the "existing" system should be based upon
+# new system means all reaches are treated as having existing elevation of 0
 reach_objects = stm.construct_reach_objects(dd,file = "/reach_config_file_ipet.csv")
-#base_frequency = storm_param_desc.loc['index','column'] #fix
+#reach_objects = stm.construct_reach_objects(dd,file = "/reach_config_file_new_system_ipet.csv")
 
 unit_price = c_mdl.get_unit_price(dd)
+# use same config file here as above (TODO: make this unnecessary)
 reach_df = stm.get_reach_df(dd,file = "/reach_config_file_ipet.csv").sort_values('reachID')
 
-#rainfall = rain.rainfall_prediction(storm_params, rain_params)
-#rainfall = 0
 base_crest_heights = reach_objects['reachHeight'].to_numpy() #something in the reach objects
 print("parameters set")
 
@@ -127,6 +132,9 @@ arguments = [reach_objects, dmg_data, nms_data, bfe_data, nsc_data, storm_params
 # The planning_horizon and discount_rate currently need to be changed in the function definition itself, as Rhodium makes it hard to 
 # pass keyword arguments (at least it makes it hard for me to figure out how to do so)
 def Larose_problem_pareto(crest_height_upgrade, needed_arguments = arguments, planning_horizon = 50, discount_rate = 0.03):
+    np.random.seed(42)
+	# levers defined as integers below for Rhodium
+    crest_height_upgrade[:] = [x / 10 for x in crest_height_upgrade]
     EAD, COST = lfv.min_cost_ead_updated(crest_height_upgrade, needed_arguments, planning_horizon, discount_rate)
     return (EAD, COST)
     
@@ -141,21 +149,23 @@ model.parameters = [Parameter("crest_height_upgrade")]
 
 model.responses = [Response("EAD", Response.MINIMIZE),
                   Response("COST", Response.MINIMIZE)]
-
-model.levers = [RealLever("crest_height_upgrade", 0.0, 5.0, length = 12)]
+# 0 to 50 represents upgrades of 0 to 5 meters (upgrade gets divided by 10 within the function above)
+model.levers = [IntegerLever("crest_height_upgrade", 0, 50, length = 12)]
 
 model.uncertainties = []
 model.constraints = []
 
 
-pareto_frontier = optimize(model, "NSGAII", 40)
+pareto_frontier = optimize(model, "NSGAII",10000)
 
-output_file = open('min_cost_ead_updated_test.pkl', 'wb')
-pickle.dump(pareto_frontier, output_file)
-output_file.close()
+pareto_frontier.save('optimization_results_9_28.csv')
+#output_file = open('min_cost_ead_updated_test.pkl', 'wb')
+#pickle.dump(pareto_frontier, output_file)
+#output_file.close()
 
 
-
+stop = timeit.default_timer()
+print('time:',stop-start)
 
 
 
