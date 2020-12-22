@@ -32,6 +32,7 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
 
     def Levee_Reach_Quantity(crest_height_lift, totalReachLengthInMeters, tWallLength,crownWidth, rearSlope, forwardSlope, existingTopOfLevee, existingGrade, overbuild, clearGrubDepth, existingCrownWidth, existingRearSlope, existingForwardSlope, rearInspectionCorridor, forwardInspectionCorridor):
         
+        crest_height_lift_in_feet = crest_height_lift/0.3048 # from meters to feet
         # Levee Reach Length
         # totalReachLengthInMeters=input('Total Reach Length in meters=');
         totalReachLength=totalReachLengthInMeters/0.3048; # from meters to feet
@@ -48,7 +49,9 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
         Y1 = ELH;
         if crest_height_lift < 0:
             print("warning: the crest height upgrade is negative")
-        H = max(0,crest_height_lift) # Levee Lift Height
+            H = 0
+        else:
+            H = crest_height_lift_in_feet # Levee Lift Height
         # overbuild=input('% Overbuild=');
         #H = leveeDesignElevation - existingTopOfLevee; 
         Ho = H * overbuild; # Overbuild height
@@ -180,8 +183,9 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
     totalTwallQuantity=[0]*7; 
     for i in range(length):
       #print("Levee Design Elevation of ",Name[i])
-      crest_height_lift = float(crest_height_upgrade[i])
-      leveeDesignElevation = crest_height_lift + existingTopOfLevee[i]
+      crest_height_lift = float(crest_height_upgrade[i]) # in meters
+      crest_height_lift_in_feet_2 = crest_height_lift/0.3048 # in feet
+      leveeDesignElevation = crest_height_lift_in_feet_2 + existingTopOfLevee[i] # in feet
       if crest_height_lift == 0:
          reachResult = [0]*5 # if  there is no upgrade for the reach, then the no construction cost needs to be calculated
       else: 
@@ -213,10 +217,7 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
             existingForwardSlope[i],rearInspectionCorridor[i], forwardInspectionCorridor[i])
       for j in range(5):
          totalLeveeQuantityForOM[j] += reachResultForOM[j]; # total reach quantity, need times unit cost then
-      
-     
-    
-    
+       
     
     #Construction cost
     leveeUnitCost=cost[0:4,1]
@@ -264,7 +265,7 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
     if discount_rate == 0:
         conversionFactor = planning_horizon
     else:
-        conversionFactor = (math.pow((1+discount_rate), planning_horizon)-1)/(discount_rate*math.pow(discount_rate+1,planning_horizon)) 
+        conversionFactor = (math.pow((1+discount_rate), planning_horizon)-1)/(discount_rate*math.pow(discount_rate+1,planning_horizon))
     OandMCost=conversionFactor * AnnualOandMCost
 
     #Total cost
@@ -277,7 +278,7 @@ def calc_str_cost(crest_height_upgrade, reach_objects, unit_price, str_cost_mult
     # print("OandMCost")
     # print(OandMCost)
     totalcost=float(constructionCost+constructionMgtCost+PED+OandMCost)
-    totalcostwithUncertaintyFactor=totalcost*(1+str_cost_mult)
+    totalcostwithUncertaintyFactor=totalcost*str_cost_mult
     #print('Estimated Construction Cost=',constructionCost)
     #print('Planning, Engineering and Design=', PED)
     #print('Operations and Maintenance=',OandMCost)
